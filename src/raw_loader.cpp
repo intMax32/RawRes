@@ -4,7 +4,7 @@
 #include <stdexcept>
 #include <libraw/libraw.h>
 
-RawImageData RawLoader::load(const std::string& path) {
+RawImageData RawLoader::load(const std::string& path) { // 이 구문 어떻게 쓰는거지?
     LibRaw rawProcessor;
 
     int ret = rawProcessor.open_file(path.c_str());
