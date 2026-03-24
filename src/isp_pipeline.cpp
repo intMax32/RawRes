@@ -11,7 +11,6 @@ cv::Mat ISPPipeline::makePreview(
     const cv::Mat& bayer16,
     int blackLevel,
     int whiteLevel,
-    double gain,
     double gamma,
     int bayerPattern,
     float redGain,

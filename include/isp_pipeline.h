@@ -8,7 +8,6 @@ public:
         const cv::Mat& bayer16,
         int blackLevel,
         int whiteLevel,
-        double gain = 1.0,
         double gamma = 2.2,
         int bayerPattern = 0,
         float redGain = 1.0f,
