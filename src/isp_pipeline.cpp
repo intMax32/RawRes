@@ -12,7 +12,11 @@ cv::Mat ISPPipeline::makePreview(
     int blackLevel,
     int whiteLevel,
     double gain,
-    double gamma
+    double gamma,
+    int bayerPattern,
+    float redGain,
+    float greenGain,
+    float blueGain
 ) {
     if (bayer16.empty() || bayer16.type() != CV_16UC1) {
         throw std::runtime_error("Invalid Bayer image.");
@@ -30,7 +34,6 @@ cv::Mat ISPPipeline::makePreview(
             float v = static_cast<float>(src[x]) - static_cast<float>(blackLevel);
             v = std::max(0.0f, v);
             v = v / denom;
-            v = static_cast<float>(v * gain);
             v = std::min(1.0f, v);
             dst[x] = v;
         }
@@ -40,11 +43,30 @@ cv::Mat ISPPipeline::makePreview(
     normalized.convertTo(normalized16, CV_16U, 65535.0);
 
     cv::Mat rgb16;
-    // 임시로 RGGB라고 가정
-    cv::cvtColor(normalized16, rgb16, cv::COLOR_BayerRG2BGR);
+    
+    if(bayerPattern == 0){
+        cv::cvtColor(normalized16, rgb16, cv::COLOR_BayerRG2BGR);    
+    }  else if(bayerPattern == 1) {
+        cv::cvtColor(normalized16, rgb16, cv::COLOR_BayerBG2BGR);
+    } else if(bayerPattern == 2) {
+        cv::cvtColor(normalized16, rgb16, cv::COLOR_BayerGR2BGR);
+    } else if(bayerPattern == 3) {
+        cv::cvtColor(normalized16, rgb16, cv::COLOR_BayerGB2BGR);
+    }
 
+    // TODO : OpenCV 내부 디모자이킹 방법 찾아보기
+    // TODO : Auto white balancing
     cv::Mat rgb32;
     rgb16.convertTo(rgb32, CV_32F, 1.0 / 65535.0);
+
+    for (int y = 0; y < rgb32.rows; ++y) {
+    cv::Vec3f* row = rgb32.ptr<cv::Vec3f>(y);
+    for (int x = 0; x < rgb32.cols; ++x) {
+        row[x][0] = std::clamp(row[x][0] * blueGain, 0.0f, 1.0f);
+        row[x][1] = std::clamp(row[x][1] * greenGain, 0.0f, 1.0f);
+        row[x][2] = std::clamp(row[x][2] * redGain, 0.0f, 1.0f);
+    }
+}
 
     cv::Mat gammaCorrected = rgb32.clone();
     const float invGamma = 1.0f / static_cast<float>(gamma);
@@ -61,5 +83,8 @@ cv::Mat ISPPipeline::makePreview(
     cv::Mat preview8;
     gammaCorrected.convertTo(preview8, CV_8UC3, 255.0);
 
-    return preview8;
+    cv::Mat result;
+    cv::cvtColor(preview8, result, cv::COLOR_BGR2RGB);
+
+    return result;
 }

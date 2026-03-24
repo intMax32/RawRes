@@ -1,0 +1,3 @@
+/Users/leejeongmin/Desktop/Developement/RawRes/build/CMakeFiles/RawRes.dir
+/Users/leejeongmin/Desktop/Developement/RawRes/build/CMakeFiles/edit_cache.dir
+/Users/leejeongmin/Desktop/Developement/RawRes/build/CMakeFiles/rebuild_cache.dir

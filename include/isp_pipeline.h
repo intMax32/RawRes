@@ -9,6 +9,10 @@ public:
         int blackLevel,
         int whiteLevel,
         double gain = 1.0,
-        double gamma = 2.2
+        double gamma = 2.2,
+        int bayerPattern = 0,
+        float redGain = 1.0f,
+        float greenGain = 1.0f,
+        float blueGain = 1.0f
     );
 };
