@@ -1,101 +1,111 @@
 # RawRes
 
-RawRes is a C++ project for exploring the RAW image processing pipeline from sensor data to displayable images.
+RawRes is a small C++ project for studying the RAW image processing pipeline from Bayer sensor data to a displayable preview image.
 
-The goal of this project is to build a lightweight **RAW reader + ISP simulator** focused on understanding and experimenting with the core stages of image formation, especially in **low-light RAW imaging**.
+The project is intentionally hands-on: instead of relying on a camera JPEG pipeline, it loads RAW data with LibRaw and reconstructs an image step by step with custom processing and OpenCV-based visualization.
 
-Rather than treating RAW files as already-finished images, RawRes works directly with sensor-like data and reconstructs a preview image step by step through a manually implemented pipeline.
+## Goals
 
----
+- understand how RAW sensor data is structured
+- inspect Bayer pattern, black level, white level, and as-shot white balance metadata
+- build a simple ISP-like preview pipeline
+- experiment with white balance and color conversion logic
+- use the project as a playground for low-light RAW processing
 
-## Motivation
+## Current Status
 
-Modern cameras and smartphones do not produce final images directly from the sensor.  
-Instead, they generate RAW data that must go through an **ISP (Image Signal Processing) pipeline**, including steps such as:
+RawRes is an experimental learning project, not a production RAW converter.
 
-- black level subtraction
-- normalization
-- white balance
-- demosaicing
-- color correction
-- tone mapping
-- gamma correction
+What is implemented today:
 
-This project exists to better understand that pipeline by implementing it manually and making each stage observable and debuggable.
+- RAW file loading through LibRaw
+- extraction of Bayer image data into `cv::Mat`
+- Bayer pattern detection
+- black level and white level metadata loading
+- as-shot white balance gain loading from `cam_mul`
+- experimental 3x3 color matrix loading from `cam_xyz`
+- Bayer demosaicing using OpenCV
+- preview generation for quick inspection
 
-In the long term, RawRes is also intended to become a small research-oriented playground for:
+What is still rough or incomplete:
 
-- low-light RAW visualization
-- ISP simulation
-- RAW color pipeline analysis
-- low-light RAW restoration experiments
+- color reproduction is not yet fully accurate
+- color correction / XYZ conversion is still experimental
+- denoising, tone mapping, and sharpening are not implemented
+- the ISP pipeline is still being refined and debugged
 
----
+## Dependencies
 
-## Current Features
+- C++17
+- CMake 3.16+
+- OpenCV
+- LibRaw
 
-At the current stage, RawRes supports:
+On macOS with Homebrew, the typical setup is:
 
-- loading RAW image files through **LibRaw**
-- reading Bayer RAW data and metadata
-- black level subtraction
-- normalization using black/white levels
-- Bayer demosaicing with OpenCV
-- manual white balance gain
-- experimental color correction / camera RGB to XYZ conversion
-- gamma correction
-- preview generation and image export
+```bash
+brew install opencv libraw
+```
 
----
+## Build
 
-## Planned Features
+From the project root:
 
-The following features are planned for future versions:
+```bash
+cmake -S . -B build
+cmake --build build
+```
 
-- automatic Bayer pattern detection from RAW metadata
-- automatic white balance
-- better color correction pipeline
-- proper tone curve / tone mapping
-- denoising stage
-- sharpening stage
-- support for low-light RAW restoration experiments
-- stage-by-stage visualization of the ISP pipeline
-- comparison mode for intermediate pipeline outputs
+The executable is built as:
 
----
+```bash
+./build/RawRes
+```
 
-## Pipeline Overview
+## Run
 
-The current pipeline is roughly:
+Pass a RAW file path as the first argument:
 
-1. Load RAW file
-2. Extract Bayer image and metadata
-3. Subtract black level
-4. Normalize by white level
-5. Demosaic Bayer image
-6. Apply white balance
-7. Apply color conversion / correction
-8. Apply gamma correction
-9. Export preview image
+```bash
+./build/RawRes /path/to/file.ARW
+```
 
-In the future, the pipeline will be extended toward a more complete ISP simulation.
+The program currently:
 
----
+- loads the RAW file
+- prints metadata to the terminal
+- creates a preview image window with OpenCV
 
-## Tech Stack
+Expected console output is similar to:
 
-- **C++17**
-- **CMake**
-- **OpenCV**
-- **LibRaw**
+```text
+Loaded RAW file: /path/to/file.ARW
+Size: 4288 x 2848
+Black level: 512
+White level: 16383
+As-shot WB (R/G/B): 1.98 / 1 / 2.19
+Bayer pattern : RGGB
+```
 
----
+## Current Pipeline
 
-## Project Structure
+At a high level, the preview path is:
+
+1. Load RAW data with LibRaw
+2. Read Bayer image into `CV_16UC1`
+3. Read Bayer pattern and camera metadata
+4. Subtract black level and normalize
+5. Demosaic Bayer to BGR with OpenCV
+6. Apply white balance / experimental color transform
+7. Apply gamma correction
+8. Display the preview image
+
+## Project Layout
 
 ```text
 RawRes/
 ├─ CMakeLists.txt
+├─ Readme.md
 ├─ include/
 │  ├─ raw_loader.h
 │  └─ isp_pipeline.h
@@ -106,3 +116,36 @@ RawRes/
 ├─ data/
 ├─ outputs/
 └─ build/
+```
+
+## Important Files
+
+- `src/raw_loader.cpp`
+  Loads RAW files through LibRaw and extracts sensor data plus metadata.
+
+- `src/isp_pipeline.cpp`
+  Contains the preview pipeline: normalization, demosaicing, white balance, color conversion, and gamma correction.
+
+- `src/main.cpp`
+  Entry point for loading a RAW file and showing a preview window.
+
+## Notes
+
+- The `data/` directory is intended for local RAW datasets and should not be committed to GitHub.
+- `cam_mul` is used as the source of as-shot white balance gains.
+- `cam_xyz` is currently loaded into a 3x3 matrix for experimentation, but the color pipeline is still under investigation.
+
+## Roadmap
+
+Likely next steps for the project:
+
+- make the preview path more stable and color-accurate
+- separate camera RGB, XYZ, and display RGB conversions more clearly
+- add optional intermediate-stage visualization
+- add white balance sliders or interactive controls
+- implement denoising and tone mapping stages
+- compare the custom ISP output against camera JPEGs or LibRaw processed output
+
+## License
+
+No license file has been added yet.
