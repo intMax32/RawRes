@@ -44,11 +44,12 @@ int main(int argc, char** argv) {
                 std::cout << "Bayer pattern : Invalid" << std::endl;
                 break;
         }
-
+        
         cv::namedWindow("RAW Preview", cv::WINDOW_AUTOSIZE);
 
         cv::Mat preview = ISPPipeline::makePreview(
             raw.bayer16,
+            raw.CCM,
             raw.blackLevel,
             raw.whiteLevel,
             2.2,

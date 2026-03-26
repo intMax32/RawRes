@@ -6,6 +6,7 @@ class ISPPipeline {
 public:
     static cv::Mat makePreview(
         const cv::Mat& bayer16,
+        const cv::Matx33f& CCM,
         int blackLevel,
         int whiteLevel,
         double gamma = 2.2,

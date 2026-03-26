@@ -13,6 +13,7 @@ struct RawImageData {
     float wbRed = 1.0f;
     float wbGreen = 1.0f;
     float wbBlue = 1.0f;
+    cv::Matx33f CCM;
 };
 
 class RawLoader {

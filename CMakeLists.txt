@@ -31,3 +31,4 @@ target_link_libraries(RawRes PRIVATE
     ${OpenCV_LIBS}
     ${LIBRAW_LIBRARY}
 )
+

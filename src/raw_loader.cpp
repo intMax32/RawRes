@@ -18,6 +18,8 @@ RawImageData RawLoader::load(const std::string& path) {
         throw std::runtime_error("Failed to unpack RAW file: " + path);
     }
 
+    rawProcessor.imgdata.params.use_camera_wb = 1;
+
     int width = rawProcessor.imgdata.sizes.raw_width;
     int height = rawProcessor.imgdata.sizes.raw_height;
 
@@ -83,6 +85,14 @@ RawImageData RawLoader::load(const std::string& path) {
     result.wbRed = wbRed;
     result.wbGreen = wbGreen;
     result.wbBlue = wbBlue;
+
+    for (int i = 0; i < 3; ++i) {
+        for (int j = 0; j < 3; ++j) {
+            result.CCM(i, j) = rawProcessor.imgdata.color.cam_xyz[i][j];
+            std::cout << rawProcessor.imgdata.color.cam_xyz[i][j] << ' ';
+        }
+        std::cout << std::endl;
+    }
 
     rawProcessor.recycle();
     return result;
