@@ -6,7 +6,5 @@ CXX_DEFINES =
 
 CXX_INCLUDES = -I/Users/leejeongmin/Desktop/Developement/RawRes/include -I/opt/homebrew/include -isystem /opt/homebrew/Cellar/opencv/4.13.0_7/include/opencv4
 
-CXX_FLAGSarm64 = -std=gnu++17 -arch arm64
-
-CXX_FLAGS = -std=gnu++17 -arch arm64
+CXX_FLAGS = -std=gnu++17
 

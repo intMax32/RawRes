@@ -1,1 +1,7 @@
-사진이 초록색으로 보이는 문제 뭐가 원인인지 알아내고 수정
+White balancing 로직 수정
+
+Noise reduction을 위해 Chroma와 Luminance를 분리할 수 있는 Color space로 보내는 과정이 필요하다.
+
+사진 색 빠지는 문제 수정
+    1. Bit 수를 잘못 지정해서 값이 사라지고 있다.
+    2. ???

@@ -1,9 +1,10 @@
 #pragma once
 
-#include <string>
 #include <opencv2/opencv.hpp>
+#include <string>
 
-struct RawImageData {
+struct RawImageData
+{
     cv::Mat bayer16; // CV_16UC1
     int width = 0;
     int height = 0;
@@ -13,10 +14,11 @@ struct RawImageData {
     float wbRed = 1.0f;
     float wbGreen = 1.0f;
     float wbBlue = 1.0f;
-    cv::Matx33f CCM;
+    cv::Matx33f rgbCam;
 };
 
-class RawLoader {
-public:
-    static RawImageData load(const std::string& path);
+class RawLoader
+{
+  public:
+    static RawImageData load(const std::string &path);
 };

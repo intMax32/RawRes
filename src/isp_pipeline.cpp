@@ -7,6 +7,11 @@
 // 최종 구현 목표 :
 // 강의노트에 적힌 ISP를 전부 시뮬레이팅 할 수 있도록 한다.
 
+cv::Mat ISPPipeline::noiseReduction()
+{
+    // TODO
+}
+
 cv::Mat ISPPipeline::makePreview(const cv::Mat &bayer16,
                                  const cv::Matx33f &rgbCam, int blackLevel,
                                  int whiteLevel, double gamma, int bayerPattern,
@@ -121,27 +126,27 @@ cv::Mat ISPPipeline::makePreview(const cv::Mat &bayer16,
     cv::Mat bgr32;
     bgr16.convertTo(bgr32, CV_32F, 1.0 / 65535.0);
 
-    cv::Mat correctedRgb(bgr32.size(), CV_32FC3);
+    cv::Mat correctedBgr(bgr32.size(), CV_32FC3);
 
     for (int y = 0; y < bgr32.rows; ++y)
     {
         cv::Vec3f *bgrRow = bgr32.ptr<cv::Vec3f>(y);
-        cv::Vec3f *correctedRgbRow = correctedRgb.ptr<cv::Vec3f>(y);
+        cv::Vec3f *correctedBgrRow = correctedBgr.ptr<cv::Vec3f>(y);
 
         for (int x = 0; x < bgr32.cols; ++x)
         {
             cv::Vec3f bgr = bgrRow[x];
-            cv::Vec3f rgb(bgr[0], bgr[1], bgr[2]);
+            cv::Vec3f rgb(bgr[2], bgr[1], bgr[0]);
 
             cv::Vec3f corrected = rgbCam * rgb;
 
-            correctedRgbRow[x][0] = corrected[0];
-            correctedRgbRow[x][1] = corrected[1];
-            correctedRgbRow[x][2] = corrected[2];
+            correctedBgrRow[x][0] = corrected[2];
+            correctedBgrRow[x][1] = corrected[1];
+            correctedBgrRow[x][2] = corrected[0];
         }
     }
 
-    cv::Mat gammaCorrected = correctedRgb.clone();
+    cv::Mat gammaCorrected = correctedBgr.clone();
 
     const float invGamma = 1.0f / static_cast<float>(gamma);
 
@@ -156,18 +161,11 @@ cv::Mat ISPPipeline::makePreview(const cv::Mat &bayer16,
         }
     }
 
+    cv::Mat preview7;
+    gammaCorrected.convertTo(preview7, CV_8UC3, 255.0);
     cv::Mat preview8;
-    gammaCorrected.convertTo(preview8, CV_8UC3, 255.0);
-
-    // TODO : Denoising
-    // TODO : Color correction
-    // TODO : Tone mapping
-    // TODO : Sharpening(Later)
-
+    cv::cvtColor(preview7, preview8, cv::COLOR_BGR2RGB);
     // TODO : Comparing with original data and restorated data
 
-    cv::Mat result;
-    cv::cvtColor(preview8, result, cv::COLOR_BGR2RGB);
-
-    return result;
+    return preview8;
 }

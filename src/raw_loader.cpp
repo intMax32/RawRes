@@ -76,6 +76,7 @@ RawImageData RawLoader::load(const std::string &path)
     float wbGreen = 1.0f;
     float wbBlue = 1.0f;
 
+    // ?
     if (camMul[0] > 0.0f && camMul[1] > 0.0f && camMul[2] > 0.0f)
     {
         const float greenRef = camMul[1];
@@ -102,7 +103,7 @@ RawImageData RawLoader::load(const std::string &path)
     {
         for (int j = 0; j < 3; ++j)
         {
-            result.CCM(i, j) = rawProcessor.imgdata.color.rgb_cam[i][j];
+            result.rgbCam(i, j) = rawProcessor.imgdata.color.rgb_cam[i][j];
         }
     }
 

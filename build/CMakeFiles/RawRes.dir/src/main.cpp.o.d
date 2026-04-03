@@ -947,5 +947,5 @@ CMakeFiles/RawRes.dir/src/main.cpp.o: \
   /opt/homebrew/Cellar/opencv/4.13.0_7/include/opencv4/opencv2/video.hpp \
   /opt/homebrew/Cellar/opencv/4.13.0_7/include/opencv4/opencv2/video/tracking.hpp \
   /opt/homebrew/Cellar/opencv/4.13.0_7/include/opencv4/opencv2/video/background_segm.hpp \
-  /Users/leejeongmin/Desktop/Developement/RawRes/include/raw_loader.h \
-  /Users/leejeongmin/Desktop/Developement/RawRes/include/isp_pipeline.h
+  /Users/leejeongmin/Desktop/Developement/RawRes/include/isp_pipeline.h \
+  /Users/leejeongmin/Desktop/Developement/RawRes/include/raw_loader.h
