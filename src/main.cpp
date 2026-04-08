@@ -4,13 +4,27 @@
 #include <iomanip>
 #include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <string>
 
 #include "isp_pipeline.h"
 #include "raw_loader.h"
 #include <opencv2/opencv.hpp>
 
-int saveImg(const std::string &filePath, const cv::Mat &img)
+namespace
+{
+std::tm makeLocalTime(std::time_t timeValue)
+{
+    std::tm localTime{};
+#if defined(_WIN32)
+    localtime_s(&localTime, &timeValue);
+#else
+    localtime_r(&timeValue, &localTime);
+#endif
+    return localTime;
+}
+
+std::filesystem::path saveImg(const std::string &filePath, const cv::Mat &img)
 {
     namespace fs = std::filesystem;
     const fs::path resultsDir = fs::current_path() / "results";
@@ -19,7 +33,7 @@ int saveImg(const std::string &filePath, const cv::Mat &img)
     const fs::path inputPath(filePath);
     const auto now = std::chrono::system_clock::now();
     const std::time_t nowTime = std::chrono::system_clock::to_time_t(now);
-    const std::tm localTime = *std::localtime(&nowTime);
+    const std::tm localTime = makeLocalTime(nowTime);
 
     std::ostringstream timestampStream;
     timestampStream << std::put_time(&localTime, "%Y%m%d_%H%M%S");
@@ -34,15 +48,22 @@ int saveImg(const std::string &filePath, const cv::Mat &img)
     }
 
     std::cout << "Saved result image: " << outputPath << std::endl;
+    return outputPath;
 }
+} // namespace
 
-int main()
+int main(int argc, char **argv)
 {
-    namespace fs = std::filesystem;
-
     std::string rawPath;
-    std::cout << "Enter a path of a photo" << std::endl;
-    std::cin >> rawPath;
+    if (argc > 1)
+    {
+        rawPath = argv[1];
+    }
+    else
+    {
+        std::cout << "Enter a path of a photo" << std::endl;
+        std::getline(std::cin >> std::ws, rawPath);
+    }
 
     try
     {
@@ -80,6 +101,7 @@ int main()
         cv::Mat preview = ISPPipeline::makePreview(
             raw.bayer16, raw.rgbCam, raw.blackLevel, raw.whiteLevel, 2.2,
             raw.bayerPattern, raw.wbRed, raw.wbGreen, raw.wbBlue, false);
+        saveImg(rawPath, preview);
 
         cv::resizeWindow("RAW Preview", preview.cols, preview.rows);
         cv::imshow("RAW Preview", preview);

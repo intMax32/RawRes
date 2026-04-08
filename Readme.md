@@ -47,6 +47,15 @@ On macOS with Homebrew, the typical setup is:
 brew install opencv libraw
 ```
 
+On Ubuntu/Debian, a typical setup is:
+
+```bash
+sudo apt install cmake g++ libopencv-dev libraw-dev
+```
+
+On Windows, install OpenCV and LibRaw first, then point CMake to them if they are
+not discoverable automatically.
+
 ## Build
 
 From the project root:
@@ -62,6 +71,13 @@ The executable is built as:
 ./build/RawRes
 ```
 
+On Windows with a multi-config generator such as Visual Studio, the executable is
+typically under:
+
+```powershell
+build\Debug\RawRes.exe
+```
+
 ## Run
 
 Pass a RAW file path as the first argument:
@@ -69,6 +85,8 @@ Pass a RAW file path as the first argument:
 ```bash
 ./build/RawRes /path/to/file.ARW
 ```
+
+You can also run without arguments and enter the path interactively when prompted.
 
 The program currently:
 

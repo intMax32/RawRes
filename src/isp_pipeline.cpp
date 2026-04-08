@@ -2,13 +2,21 @@
 #include <algorithm>
 #include <cmath>
 #include <opencv2/photo.hpp>
-#include <opencv2/xphoto.hpp>
 #include <stdexcept>
 
 // TODO : HDR 지원하기
 
-cv::Mat ISPPipeline::BM3D(cv::Mat image) {}
-cv::Mat ISPPipeline::GuidedFilter(cv::Mat image) {}
+cv::Mat ISPPipeline::BM3D(cv::Mat image)
+{
+    (void)image;
+    throw std::runtime_error("BM3D is not implemented yet.");
+}
+
+cv::Mat ISPPipeline::GuidedFilter(cv::Mat image)
+{
+    (void)image;
+    throw std::runtime_error("GuidedFilter is not implemented yet.");
+}
 
 cv::Mat ISPPipeline::makePreview(const cv::Mat &bayer16,
                                  const cv::Matx33f &rgbCam, int blackLevel,
@@ -171,7 +179,10 @@ cv::Mat ISPPipeline::makePreview(const cv::Mat &bayer16,
     {
         // cv::Mat previewDst = ISPPipeline::denoise(preview8);
         // return previewDst;
+        return preview8;
     }
     else
+    {
         return preview8;
+    }
 }
