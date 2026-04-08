@@ -5,10 +5,12 @@
 class ISPPipeline
 {
   public:
-    static cv::Mat ISPPipeline::noiseReduction() {}
+    static cv::Mat ISPPipeline::BM3D(cv::Mat image);
+    static cv::Mat ISPPipeline::GuidedFilter(cv::Mat image);
     static cv::Mat makePreview(const cv::Mat &bayer16,
                                const cv::Matx33f &rgbCam, int blackLevel,
                                int whiteLevel, double gamma = 2.2,
                                int bayerPattern = 0, float redGain = 1.0f,
-                               float greenGain = 1.0f, float blueGain = 1.0f);
+                               float greenGain = 1.0f, float blueGain = 1.0f,
+                               bool isDenoised = true);
 };

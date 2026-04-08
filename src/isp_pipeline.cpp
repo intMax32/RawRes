@@ -1,21 +1,20 @@
 #include "isp_pipeline.h"
-
 #include <algorithm>
 #include <cmath>
+#include <opencv2/photo.hpp>
+#include <opencv2/xphoto.hpp>
 #include <stdexcept>
 
-// 최종 구현 목표 :
-// 강의노트에 적힌 ISP를 전부 시뮬레이팅 할 수 있도록 한다.
+// TODO : HDR 지원하기
 
-cv::Mat ISPPipeline::noiseReduction()
-{
-    // TODO
-}
+cv::Mat ISPPipeline::BM3D(cv::Mat image) {}
+cv::Mat ISPPipeline::GuidedFilter(cv::Mat image) {}
 
 cv::Mat ISPPipeline::makePreview(const cv::Mat &bayer16,
                                  const cv::Matx33f &rgbCam, int blackLevel,
                                  int whiteLevel, double gamma, int bayerPattern,
-                                 float redGain, float greenGain, float blueGain)
+                                 float redGain, float greenGain, float blueGain,
+                                 bool isDenoised)
 {
     if (bayer16.empty() || bayer16.type() != CV_16UC1)
     {
@@ -105,10 +104,10 @@ cv::Mat ISPPipeline::makePreview(const cv::Mat &bayer16,
 
     cv::Mat bgr16;
 
-    // TODO : Implementing demosaicing myself
+    // Demosaicing
     if (bayerPattern == 0)
     { // RGGB
-        cv::cvtColor(normalized16, bgr16, cv::COLOR_BayerRG2BGR);
+        cv::cvtColor(normalized16, bgr16, cv::COLOR_BayerRG2BGR_EA);
     }
     else if (bayerPattern == 1)
     {
@@ -146,6 +145,8 @@ cv::Mat ISPPipeline::makePreview(const cv::Mat &bayer16,
         }
     }
 
+    // Gamma correction
+
     cv::Mat gammaCorrected = correctedBgr.clone();
 
     const float invGamma = 1.0f / static_cast<float>(gamma);
@@ -166,6 +167,11 @@ cv::Mat ISPPipeline::makePreview(const cv::Mat &bayer16,
     cv::Mat preview8;
     cv::cvtColor(preview7, preview8, cv::COLOR_BGR2RGB);
     // TODO : Comparing with original data and restorated data
-
-    return preview8;
+    if (isDenoised)
+    {
+        // cv::Mat previewDst = ISPPipeline::denoise(preview8);
+        // return previewDst;
+    }
+    else
+        return preview8;
 }

@@ -1,13 +1,45 @@
+#include <chrono>
+#include <ctime>
+#include <filesystem>
+#include <iomanip>
 #include <iostream>
+#include <sstream>
 #include <string>
-
-#include <opencv2/opencv.hpp>
 
 #include "isp_pipeline.h"
 #include "raw_loader.h"
+#include <opencv2/opencv.hpp>
+
+int saveImg(const std::string &filePath, const cv::Mat &img)
+{
+    namespace fs = std::filesystem;
+    const fs::path resultsDir = fs::current_path() / "results";
+    fs::create_directories(resultsDir);
+
+    const fs::path inputPath(filePath);
+    const auto now = std::chrono::system_clock::now();
+    const std::time_t nowTime = std::chrono::system_clock::to_time_t(now);
+    const std::tm localTime = *std::localtime(&nowTime);
+
+    std::ostringstream timestampStream;
+    timestampStream << std::put_time(&localTime, "%Y%m%d_%H%M%S");
+
+    const fs::path outputPath =
+        resultsDir / (inputPath.stem().string() + "_" + timestampStream.str() +
+                      "_result.png");
+
+    if (!cv::imwrite(outputPath.string(), img))
+    {
+        throw std::runtime_error("Failed to save result image.");
+    }
+
+    std::cout << "Saved result image: " << outputPath << std::endl;
+}
 
 int main()
 {
+    namespace fs = std::filesystem;
+
     std::string rawPath;
     std::cout << "Enter a path of a photo" << std::endl;
     std::cin >> rawPath;
@@ -42,14 +74,19 @@ int main()
             break;
         }
 
-        cv::namedWindow("RAW Preview", cv::WINDOW_AUTOSIZE);
+        cv::namedWindow("RAW Preview",
+                        cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO);
 
         cv::Mat preview = ISPPipeline::makePreview(
             raw.bayer16, raw.rgbCam, raw.blackLevel, raw.whiteLevel, 2.2,
-            raw.bayerPattern, raw.wbRed, raw.wbGreen, raw.wbBlue);
+            raw.bayerPattern, raw.wbRed, raw.wbGreen, raw.wbBlue, false);
 
+        cv::resizeWindow("RAW Preview", preview.cols, preview.rows);
         cv::imshow("RAW Preview", preview);
-        cv::waitKey(0);
+
+        while (cv::waitKey(1) != 27) // esc
+        {
+        };
     }
     catch (const std::exception &e)
     {
