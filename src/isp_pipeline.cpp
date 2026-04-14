@@ -41,11 +41,12 @@ cv::Mat ISPPipeline::GrayGuidedFilter(int radius, cv::Mat &p, cv::Mat &I,
     cv::Mat meanOfB;
 
     cv::boxFilter(I, meanOfI, CV_32F, cv::Size(2 * radius + 1, 2 * radius + 1));
-
     cv::boxFilter(p, meanOfP, CV_32F, cv::Size(2 * radius + 1, 2 * radius + 1));
 
     cv::Mat IP = I.mul(p);
     cv::Mat II = I.mul(I);
+
+    std::cout << "Problem" << std::endl;
 
     cv::Mat corrOfIP;
     cv::Mat corrOfI;
@@ -124,7 +125,7 @@ cv::Mat ISPPipeline::makePreview(const cv::Mat &bayer16,
                                  const cv::Matx33f &rgbCam, int blackLevel,
                                  int whiteLevel, double gamma, int bayerPattern,
                                  float redGain, float greenGain, float blueGain,
-                                 bool isDenoised)
+                                 int denoiser)
 {
     if (bayer16.empty() || bayer16.type() != CV_16UC1)
     {
@@ -254,9 +255,28 @@ cv::Mat ISPPipeline::makePreview(const cv::Mat &bayer16,
         }
     }
 
+    cv::Mat denoisedImg;
+
+    if (denoiser < 1) // No denoise
+    {
+        // cv::Mat previewDst = ISPPipeline::denoise(preview8);
+        // return previewDst;
+    }
+    else if (denoiser == 1) // guided filter
+    {
+        // Test code
+
+        cv::Mat temp;
+        cv::cvtColor(correctedBgr, temp, cv::COLOR_BGR2GRAY);
+        denoisedImg = GuidedFilter(3, correctedBgr, temp, 0.1);
+    }
+    else if (denoiser == 2) // BM3D
+    {
+    }
+
     // Gamma correction
 
-    cv::Mat gammaCorrected = correctedBgr.clone();
+    cv::Mat gammaCorrected = denoisedImg.clone();
 
     const float invGamma = 1.0f / static_cast<float>(gamma);
 
@@ -274,16 +294,9 @@ cv::Mat ISPPipeline::makePreview(const cv::Mat &bayer16,
     cv::Mat preview7;
     gammaCorrected.convertTo(preview7, CV_8UC3, 255.0);
     cv::Mat preview8;
+
     cv::cvtColor(preview7, preview8, cv::COLOR_BGR2RGB);
     // TODO : Comparing with original data and restorated data
-    if (isDenoised)
-    {
-        // cv::Mat previewDst = ISPPipeline::denoise(preview8);
-        // return previewDst;
-        return preview8;
-    }
-    else
-    {
-        return preview8;
-    }
+
+    return preview8;
 }

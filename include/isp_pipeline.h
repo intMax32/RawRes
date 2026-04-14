@@ -19,5 +19,5 @@ class ISPPipeline
                                int whiteLevel, double gamma = 2.2,
                                int bayerPattern = 0, float redGain = 1.0f,
                                float greenGain = 1.0f, float blueGain = 1.0f,
-                               bool isDenoised = true);
+                               int denoiser = 0);
 };
