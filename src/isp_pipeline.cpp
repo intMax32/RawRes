@@ -6,16 +6,118 @@
 
 // TODO : HDR 지원하기
 
-cv::Mat ISPPipeline::BM3D(cv::Mat image)
+cv::Mat ISPPipeline::BM3D(cv::Mat &image)
 {
     (void)image;
     throw std::runtime_error("BM3D is not implemented yet.");
 }
 
-cv::Mat ISPPipeline::GuidedFilter(cv::Mat image)
+cv::Mat ISPPipeline::GuidedFilter(int radius, cv::Mat &p, cv::Mat &I, float eps)
 {
-    (void)image;
-    throw std::runtime_error("GuidedFilter is not implemented yet.");
+    int ICh = I.channels();
+    cv::Mat output;
+
+    if (ICh == 1) // Grayscale guide image
+    {
+        output = GrayGuidedFilter(radius, p, I, eps);
+    }
+    else if (ICh == 3) // Color guide image
+    {
+        output = ColorGuidedFilter(radius, p, I, eps);
+    }
+
+    return output;
+}
+
+cv::Mat ISPPipeline::GrayGuidedFilter(int radius, cv::Mat &p, cv::Mat &I,
+                                      float eps)
+{
+    cv::Mat meanOfP;
+    cv::Mat meanOfI;
+
+    cv::Mat a;
+    cv::Mat meanOfA;
+    cv::Mat b;
+    cv::Mat meanOfB;
+
+    cv::boxFilter(I, meanOfI, CV_32F, cv::Size(2 * radius + 1, 2 * radius + 1));
+
+    cv::boxFilter(p, meanOfP, CV_32F, cv::Size(2 * radius + 1, 2 * radius + 1));
+
+    cv::Mat IP = I.mul(p);
+    cv::Mat II = I.mul(I);
+
+    cv::Mat corrOfIP;
+    cv::Mat corrOfI;
+    cv::boxFilter(IP, corrOfIP, CV_32F,
+                  cv::Size(2 * radius + 1, 2 * radius + 1));
+
+    cv::boxFilter(II, corrOfI, CV_32F,
+                  cv::Size(2 * radius + 1, 2 * radius + 1));
+
+    cv::Mat varOfI;
+    cv::subtract(corrOfI, meanOfI.mul(meanOfI), varOfI);
+
+    cv::Mat covOfIP;
+    cv::subtract(corrOfIP, meanOfI.mul(meanOfP), covOfIP);
+
+    cv::divide(covOfIP, (varOfI + eps), a);
+    cv::subtract(meanOfP, a.mul(meanOfI), b);
+
+    cv::boxFilter(a, meanOfA, CV_32F, cv::Size(2 * radius + 1, 2 * radius + 1));
+    cv::boxFilter(b, meanOfB, CV_32F, cv::Size(2 * radius + 1, 2 * radius + 1));
+
+    cv::Mat q;
+
+    cv::multiply(meanOfA, I, q);
+    q += b;
+
+    return q;
+}
+
+cv::Mat ISPPipeline::ColorGuidedFilter(int radius, cv::Mat &p, cv::Mat &I,
+                                       float eps)
+{
+    cv::Mat meanOfP;
+    cv::Mat meanOfI;
+
+    cv::Mat a;
+    cv::Mat meanOfA;
+    cv::Mat b;
+    cv::Mat meanOfB;
+
+    cv::boxFilter(I, meanOfI, CV_32F, cv::Size(2 * radius + 1, 2 * radius + 1));
+    cv::boxFilter(p, meanOfP, CV_32F, cv::Size(2 * radius + 1, 2 * radius + 1));
+
+    cv::Mat IP = I.mul(p);
+    cv::Mat II = I.mul(I);
+
+    cv::Mat corrOfIP;
+    cv::Mat corrOfI;
+    cv::boxFilter(IP, corrOfIP, CV_32F,
+                  cv::Size(2 * radius + 1, 2 * radius + 1));
+
+    cv::boxFilter(II, corrOfI, CV_32F,
+                  cv::Size(2 * radius + 1, 2 * radius + 1));
+
+    cv::Mat covMatOfI;
+    cv::subtract(corrOfI, meanOfI.mul(meanOfI), covMatOfI);
+
+    cv::Mat covOfIP;
+    cv::subtract(corrOfIP, meanOfI.mul(meanOfP), covOfIP);
+
+    cv::divide(covOfIP, (covMatOfI + eps), a);
+    cv::subtract(meanOfP, a.mul(meanOfI), b);
+
+    cv::boxFilter(a, meanOfA, CV_32F, cv::Size(2 * radius + 1, 2 * radius + 1));
+    cv::boxFilter(b, meanOfB, CV_32F, cv::Size(2 * radius + 1, 2 * radius + 1));
+
+    cv::Mat q;
+
+    cv::multiply(meanOfA, I, q);
+    q += b;
+
+    return q;
 }
 
 cv::Mat ISPPipeline::makePreview(const cv::Mat &bayer16,
@@ -32,7 +134,6 @@ cv::Mat ISPPipeline::makePreview(const cv::Mat &bayer16,
     cv::Mat normalized = cv::Mat::zeros(bayer16.size(), CV_32F);
 
     const float denom = std::max(1, whiteLevel - blackLevel);
-
     // Normalise and white balance in Bayer space.
     for (int y = 0; y < bayer16.rows; ++y)
     {

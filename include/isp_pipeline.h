@@ -5,8 +5,15 @@
 class ISPPipeline
 {
   public:
-    static cv::Mat BM3D(cv::Mat image);
-    static cv::Mat GuidedFilter(cv::Mat image);
+    static cv::Mat BM3D(cv::Mat &image);
+    static cv::Mat GuidedFilter(int radius, cv::Mat &p, cv::Mat &I, float eps);
+
+    static cv::Mat GrayGuidedFilter(int radius, cv::Mat &p, cv::Mat &I,
+                                    float eps);
+
+    static cv::Mat ColorGuidedFilter(int radius, cv::Mat &p, cv::Mat &I,
+                                     float eps);
+
     static cv::Mat makePreview(const cv::Mat &bayer16,
                                const cv::Matx33f &rgbCam, int blackLevel,
                                int whiteLevel, double gamma = 2.2,
