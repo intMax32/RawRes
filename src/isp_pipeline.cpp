@@ -370,8 +370,32 @@ cv::Mat ISPPipeline::makePreview(const cv::Mat &bayer16,
 
     if (denoiser < 1) // No denoise
     {
-        // cv::Mat previewDst = ISPPipeline::denoise(preview8);
-        // return previewDst;
+        cv::Mat gammaCorrected = correctedBgr.clone();
+
+        const float invGamma = 1.0f / static_cast<float>(gamma);
+
+        for (int y = 0; y < gammaCorrected.rows; ++y)
+        {
+            cv::Vec3f *row = gammaCorrected.ptr<cv::Vec3f>(y);
+            for (int x = 0; x < gammaCorrected.cols; ++x)
+            {
+                row[x][0] =
+                    std::pow(std::clamp(row[x][0], 0.0f, 1.0f), invGamma);
+                row[x][1] =
+                    std::pow(std::clamp(row[x][1], 0.0f, 1.0f), invGamma);
+                row[x][2] =
+                    std::pow(std::clamp(row[x][2], 0.0f, 1.0f), invGamma);
+            }
+        }
+
+        cv::Mat preview7;
+        gammaCorrected.convertTo(preview7, CV_8UC3, 255.0);
+        cv::Mat preview8;
+
+        cv::cvtColor(preview7, preview8, cv::COLOR_BGR2RGB);
+        // TODO : Comparing with original data and restorated data
+
+        return preview8;
     }
     else if (denoiser == 1) // guided filter
     {
@@ -379,7 +403,7 @@ cv::Mat ISPPipeline::makePreview(const cv::Mat &bayer16,
 
         cv::Mat temp;
         cv::cvtColor(correctedBgr, temp, cv::COLOR_BGR2GRAY);
-        denoisedImg = GuidedFilter(3, correctedBgr, temp, 0.1f);
+        denoisedImg = GuidedFilter(3, correctedBgr, temp, 0.5f);
     }
     else if (denoiser == 2) // BM3D
     {

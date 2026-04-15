@@ -100,7 +100,7 @@ int main(int argc, char **argv)
 
         cv::Mat preview = ISPPipeline::makePreview(
             raw.bayer16, raw.rgbCam, raw.blackLevel, raw.whiteLevel, 2.2,
-            raw.bayerPattern, raw.wbRed, raw.wbGreen, raw.wbBlue, 1);
+            raw.bayerPattern, raw.wbRed, raw.wbGreen, raw.wbBlue, 0);
         saveImg(rawPath, preview);
 
         cv::resizeWindow("RAW Preview", preview.cols, preview.rows);
