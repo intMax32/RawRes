@@ -26,12 +26,15 @@ What is implemented today:
 - experimental 3x3 color matrix loading from `cam_xyz`
 - Bayer demosaicing using OpenCV
 - preview generation for quick inspection
+- noise removal routines split into separate modules
+- guided filter support for preview denoising
 
 What is still rough or incomplete:
 
 - color reproduction is not yet fully accurate
 - color correction / XYZ conversion is still experimental
-- denoising, tone mapping, and sharpening are not implemented
+- BM3D is still a stub
+- tone mapping and sharpening are not implemented
 - the ISP pipeline is still being refined and debugged
 
 ## Dependencies
@@ -125,14 +128,20 @@ RawRes/
 ├─ CMakeLists.txt
 ├─ Readme.md
 ├─ include/
+│  ├─ isp_pipeline.h
 │  ├─ raw_loader.h
-│  └─ isp_pipeline.h
+│  └─ noise_removal/
+│     ├─ bm3d.h
+│     └─ guided_filter.h
 ├─ src/
 │  ├─ main.cpp
 │  ├─ raw_loader.cpp
-│  └─ isp_pipeline.cpp
+│  ├─ isp_pipeline.cpp
+│  └─ noise_removal/
+│     ├─ bm3d.cpp
+│     └─ guided_filter.cpp
 ├─ data/
-├─ outputs/
+├─ results/
 └─ build/
 ```
 
@@ -142,7 +151,13 @@ RawRes/
   Loads RAW files through LibRaw and extracts sensor data plus metadata.
 
 - `src/isp_pipeline.cpp`
-  Contains the preview pipeline: normalization, demosaicing, white balance, color conversion, and gamma correction.
+  Contains the preview pipeline: normalization, demosaicing, white balance, color conversion, gamma correction, and optional denoising dispatch.
+
+- `src/noise_removal/guided_filter.cpp`
+  Guided filter implementation used by the preview pipeline when denoising is enabled.
+
+- `src/noise_removal/bm3d.cpp`
+  Placeholder for BM3D. The function exists, but the algorithm is not implemented yet.
 
 - `src/main.cpp`
   Entry point for loading a RAW file and showing a preview window.
@@ -161,7 +176,8 @@ Likely next steps for the project:
 - separate camera RGB, XYZ, and display RGB conversions more clearly
 - add optional intermediate-stage visualization
 - add white balance sliders or interactive controls
-- implement denoising and tone mapping stages
+- implement BM3D
+- add tone mapping and sharpening stages
 - compare the custom ISP output against camera JPEGs or LibRaw processed output
 
 ## License
