@@ -13,6 +13,8 @@
 
 namespace
 {
+constexpr const char *kPreviewWindowName = "RAW Preview";
+
 std::tm makeLocalTime(std::time_t timeValue)
 {
     std::tm localTime{};
@@ -95,16 +97,16 @@ int main(int argc, char **argv)
             break;
         }
 
-        cv::namedWindow("RAW Preview",
+        cv::namedWindow(kPreviewWindowName,
                         cv::WINDOW_NORMAL | cv::WINDOW_KEEPRATIO);
 
         cv::Mat preview = ISPPipeline::makePreview(
             raw.bayer16, raw.rgbCam, raw.blackLevel, raw.whiteLevel, 2.2,
-            raw.bayerPattern, raw.wbRed, raw.wbGreen, raw.wbBlue, 0);
+            raw.bayerPattern, raw.wbRed, raw.wbGreen, raw.wbBlue, 1);
         saveImg(rawPath, preview);
 
-        cv::resizeWindow("RAW Preview", preview.cols, preview.rows);
-        cv::imshow("RAW Preview", preview);
+        cv::resizeWindow(kPreviewWindowName, preview.cols, preview.rows);
+        cv::imshow(kPreviewWindowName, preview);
 
         while (cv::waitKey(1) != 27) // esc
         {

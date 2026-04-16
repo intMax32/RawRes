@@ -34,6 +34,8 @@ add_executable(RawRes
     src/main.cpp
     src/raw_loader.cpp
     src/isp_pipeline.cpp
+    src/noise_removal/bm3d.cpp
+    src/noise_removal/guided_filter.cpp
 )
 
 target_include_directories(RawRes PRIVATE

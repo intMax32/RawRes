@@ -114,11 +114,41 @@ CMakeFiles/RawRes.dir/src/isp_pipeline.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/RawRes.dir/src/isp_pipeline.cpp.s"
 	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/leejeongmin/Desktop/Developement/RawRes/src/isp_pipeline.cpp -o CMakeFiles/RawRes.dir/src/isp_pipeline.cpp.s
 
+CMakeFiles/RawRes.dir/src/noise_removal/bm3d.cpp.o: CMakeFiles/RawRes.dir/flags.make
+CMakeFiles/RawRes.dir/src/noise_removal/bm3d.cpp.o: /Users/leejeongmin/Desktop/Developement/RawRes/src/noise_removal/bm3d.cpp
+CMakeFiles/RawRes.dir/src/noise_removal/bm3d.cpp.o: CMakeFiles/RawRes.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/leejeongmin/Desktop/Developement/RawRes/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/RawRes.dir/src/noise_removal/bm3d.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/RawRes.dir/src/noise_removal/bm3d.cpp.o -MF CMakeFiles/RawRes.dir/src/noise_removal/bm3d.cpp.o.d -o CMakeFiles/RawRes.dir/src/noise_removal/bm3d.cpp.o -c /Users/leejeongmin/Desktop/Developement/RawRes/src/noise_removal/bm3d.cpp
+
+CMakeFiles/RawRes.dir/src/noise_removal/bm3d.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/RawRes.dir/src/noise_removal/bm3d.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/leejeongmin/Desktop/Developement/RawRes/src/noise_removal/bm3d.cpp > CMakeFiles/RawRes.dir/src/noise_removal/bm3d.cpp.i
+
+CMakeFiles/RawRes.dir/src/noise_removal/bm3d.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/RawRes.dir/src/noise_removal/bm3d.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/leejeongmin/Desktop/Developement/RawRes/src/noise_removal/bm3d.cpp -o CMakeFiles/RawRes.dir/src/noise_removal/bm3d.cpp.s
+
+CMakeFiles/RawRes.dir/src/noise_removal/guided_filter.cpp.o: CMakeFiles/RawRes.dir/flags.make
+CMakeFiles/RawRes.dir/src/noise_removal/guided_filter.cpp.o: /Users/leejeongmin/Desktop/Developement/RawRes/src/noise_removal/guided_filter.cpp
+CMakeFiles/RawRes.dir/src/noise_removal/guided_filter.cpp.o: CMakeFiles/RawRes.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/leejeongmin/Desktop/Developement/RawRes/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/RawRes.dir/src/noise_removal/guided_filter.cpp.o"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/RawRes.dir/src/noise_removal/guided_filter.cpp.o -MF CMakeFiles/RawRes.dir/src/noise_removal/guided_filter.cpp.o.d -o CMakeFiles/RawRes.dir/src/noise_removal/guided_filter.cpp.o -c /Users/leejeongmin/Desktop/Developement/RawRes/src/noise_removal/guided_filter.cpp
+
+CMakeFiles/RawRes.dir/src/noise_removal/guided_filter.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/RawRes.dir/src/noise_removal/guided_filter.cpp.i"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/leejeongmin/Desktop/Developement/RawRes/src/noise_removal/guided_filter.cpp > CMakeFiles/RawRes.dir/src/noise_removal/guided_filter.cpp.i
+
+CMakeFiles/RawRes.dir/src/noise_removal/guided_filter.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/RawRes.dir/src/noise_removal/guided_filter.cpp.s"
+	/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/leejeongmin/Desktop/Developement/RawRes/src/noise_removal/guided_filter.cpp -o CMakeFiles/RawRes.dir/src/noise_removal/guided_filter.cpp.s
+
 # Object files for target RawRes
 RawRes_OBJECTS = \
 "CMakeFiles/RawRes.dir/src/main.cpp.o" \
 "CMakeFiles/RawRes.dir/src/raw_loader.cpp.o" \
-"CMakeFiles/RawRes.dir/src/isp_pipeline.cpp.o"
+"CMakeFiles/RawRes.dir/src/isp_pipeline.cpp.o" \
+"CMakeFiles/RawRes.dir/src/noise_removal/bm3d.cpp.o" \
+"CMakeFiles/RawRes.dir/src/noise_removal/guided_filter.cpp.o"
 
 # External object files for target RawRes
 RawRes_EXTERNAL_OBJECTS =
@@ -126,6 +156,8 @@ RawRes_EXTERNAL_OBJECTS =
 RawRes: CMakeFiles/RawRes.dir/src/main.cpp.o
 RawRes: CMakeFiles/RawRes.dir/src/raw_loader.cpp.o
 RawRes: CMakeFiles/RawRes.dir/src/isp_pipeline.cpp.o
+RawRes: CMakeFiles/RawRes.dir/src/noise_removal/bm3d.cpp.o
+RawRes: CMakeFiles/RawRes.dir/src/noise_removal/guided_filter.cpp.o
 RawRes: CMakeFiles/RawRes.dir/build.make
 RawRes: /opt/homebrew/lib/libopencv_gapi.4.13.0.dylib
 RawRes: /opt/homebrew/lib/libopencv_stitching.4.13.0.dylib
@@ -185,7 +217,7 @@ RawRes: /opt/homebrew/lib/libopencv_photo.4.13.0.dylib
 RawRes: /opt/homebrew/lib/libopencv_imgproc.4.13.0.dylib
 RawRes: /opt/homebrew/lib/libopencv_core.4.13.0.dylib
 RawRes: CMakeFiles/RawRes.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/leejeongmin/Desktop/Developement/RawRes/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable RawRes"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/leejeongmin/Desktop/Developement/RawRes/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking CXX executable RawRes"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/RawRes.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.

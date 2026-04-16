@@ -177,6 +177,54 @@ src/main.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/RawRes.dir/build.make CMakeFiles/RawRes.dir/src/main.cpp.s
 .PHONY : src/main.cpp.s
 
+src/noise_removal/bm3d.o: src/noise_removal/bm3d.cpp.o
+.PHONY : src/noise_removal/bm3d.o
+
+# target to build an object file
+src/noise_removal/bm3d.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RawRes.dir/build.make CMakeFiles/RawRes.dir/src/noise_removal/bm3d.cpp.o
+.PHONY : src/noise_removal/bm3d.cpp.o
+
+src/noise_removal/bm3d.i: src/noise_removal/bm3d.cpp.i
+.PHONY : src/noise_removal/bm3d.i
+
+# target to preprocess a source file
+src/noise_removal/bm3d.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RawRes.dir/build.make CMakeFiles/RawRes.dir/src/noise_removal/bm3d.cpp.i
+.PHONY : src/noise_removal/bm3d.cpp.i
+
+src/noise_removal/bm3d.s: src/noise_removal/bm3d.cpp.s
+.PHONY : src/noise_removal/bm3d.s
+
+# target to generate assembly for a file
+src/noise_removal/bm3d.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RawRes.dir/build.make CMakeFiles/RawRes.dir/src/noise_removal/bm3d.cpp.s
+.PHONY : src/noise_removal/bm3d.cpp.s
+
+src/noise_removal/guided_filter.o: src/noise_removal/guided_filter.cpp.o
+.PHONY : src/noise_removal/guided_filter.o
+
+# target to build an object file
+src/noise_removal/guided_filter.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RawRes.dir/build.make CMakeFiles/RawRes.dir/src/noise_removal/guided_filter.cpp.o
+.PHONY : src/noise_removal/guided_filter.cpp.o
+
+src/noise_removal/guided_filter.i: src/noise_removal/guided_filter.cpp.i
+.PHONY : src/noise_removal/guided_filter.i
+
+# target to preprocess a source file
+src/noise_removal/guided_filter.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RawRes.dir/build.make CMakeFiles/RawRes.dir/src/noise_removal/guided_filter.cpp.i
+.PHONY : src/noise_removal/guided_filter.cpp.i
+
+src/noise_removal/guided_filter.s: src/noise_removal/guided_filter.cpp.s
+.PHONY : src/noise_removal/guided_filter.s
+
+# target to generate assembly for a file
+src/noise_removal/guided_filter.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/RawRes.dir/build.make CMakeFiles/RawRes.dir/src/noise_removal/guided_filter.cpp.s
+.PHONY : src/noise_removal/guided_filter.cpp.s
+
 src/raw_loader.o: src/raw_loader.cpp.o
 .PHONY : src/raw_loader.o
 
@@ -216,6 +264,12 @@ help:
 	@echo "... src/main.o"
 	@echo "... src/main.i"
 	@echo "... src/main.s"
+	@echo "... src/noise_removal/bm3d.o"
+	@echo "... src/noise_removal/bm3d.i"
+	@echo "... src/noise_removal/bm3d.s"
+	@echo "... src/noise_removal/guided_filter.o"
+	@echo "... src/noise_removal/guided_filter.i"
+	@echo "... src/noise_removal/guided_filter.s"
 	@echo "... src/raw_loader.o"
 	@echo "... src/raw_loader.i"
 	@echo "... src/raw_loader.s"

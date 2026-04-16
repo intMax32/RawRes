@@ -16,5 +16,17 @@
   "command": "/usr/bin/c++  -I/Users/leejeongmin/Desktop/Developement/RawRes/include -I/opt/homebrew/include -isystem /opt/homebrew/Cellar/opencv/4.13.0_7/include/opencv4 -std=c++17 -o CMakeFiles/RawRes.dir/src/isp_pipeline.cpp.o -c /Users/leejeongmin/Desktop/Developement/RawRes/src/isp_pipeline.cpp",
   "file": "/Users/leejeongmin/Desktop/Developement/RawRes/src/isp_pipeline.cpp",
   "output": "CMakeFiles/RawRes.dir/src/isp_pipeline.cpp.o"
+},
+{
+  "directory": "/Users/leejeongmin/Desktop/Developement/RawRes/build",
+  "command": "/usr/bin/c++  -I/Users/leejeongmin/Desktop/Developement/RawRes/include -I/opt/homebrew/include -isystem /opt/homebrew/Cellar/opencv/4.13.0_7/include/opencv4 -std=c++17 -o CMakeFiles/RawRes.dir/src/noise_removal/bm3d.cpp.o -c /Users/leejeongmin/Desktop/Developement/RawRes/src/noise_removal/bm3d.cpp",
+  "file": "/Users/leejeongmin/Desktop/Developement/RawRes/src/noise_removal/bm3d.cpp",
+  "output": "CMakeFiles/RawRes.dir/src/noise_removal/bm3d.cpp.o"
+},
+{
+  "directory": "/Users/leejeongmin/Desktop/Developement/RawRes/build",
+  "command": "/usr/bin/c++  -I/Users/leejeongmin/Desktop/Developement/RawRes/include -I/opt/homebrew/include -isystem /opt/homebrew/Cellar/opencv/4.13.0_7/include/opencv4 -std=c++17 -o CMakeFiles/RawRes.dir/src/noise_removal/guided_filter.cpp.o -c /Users/leejeongmin/Desktop/Developement/RawRes/src/noise_removal/guided_filter.cpp",
+  "file": "/Users/leejeongmin/Desktop/Developement/RawRes/src/noise_removal/guided_filter.cpp",
+  "output": "CMakeFiles/RawRes.dir/src/noise_removal/guided_filter.cpp.o"
 }
 ]
