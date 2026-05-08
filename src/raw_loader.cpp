@@ -23,12 +23,23 @@ RawImageData RawLoader::load(const std::string &path)
 
     rawProcessor.imgdata.params.use_camera_wb = 1;
 
-    int width = rawProcessor.imgdata.sizes.raw_width;
-    int height = rawProcessor.imgdata.sizes.raw_height;
+    int rawWidth = rawProcessor.imgdata.sizes.raw_width;
+    int rawHeight = rawProcessor.imgdata.sizes.raw_height;
+
+    int width = rawProcessor.imgdata.sizes.width;
+    int height = rawProcessor.imgdata.sizes.height;
+
+    int left = rawProcessor.imgdata.sizes.left_margin;
+    int top = rawProcessor.imgdata.sizes.top_margin;
+
+    std::cout << "Raw Width : " << rawWidth << std::endl;
+    std::cout << "Raw Height : " << rawHeight << std::endl;
+    std::cout << "Width : " << width << std::endl;
+    std::cout << "Height : " << height << std::endl;
 
     const char *cdesc = rawProcessor.imgdata.idata.cdesc;
-    int c00 = rawProcessor.COLOR(0, 0);
-    int c01 = rawProcessor.COLOR(0, 1);
+    int c00 = rawProcessor.COLOR(top, left);
+    int c01 = rawProcessor.COLOR(top, left + 1);
     int bayerPattern;
 
     if (cdesc[c00] == 'R')
@@ -60,11 +71,20 @@ RawImageData RawLoader::load(const std::string &path)
     }
 
     for (int y = 0; y < height; ++y)
+
     {
+
         ushort *dst = bayer.ptr<ushort>(y);
+
         for (int x = 0; x < width; ++x)
+
         {
-            dst[x] = rawData[y * width + x];
+
+            int rawX = x + left;
+
+            int rawY = y + top;
+
+            dst[x] = rawData[rawY * rawWidth + rawX];
         }
     }
 
@@ -76,10 +96,10 @@ RawImageData RawLoader::load(const std::string &path)
     float wbGreen = 1.0f;
     float wbBlue = 1.0f;
 
-    // ?
-    if (camMul[0] > 0.0f && camMul[1] > 0.0f && camMul[2] > 0.0f)
+    if (camMul[0] > 0.0f && camMul[1] > 0.0f && camMul[2] > 0.0f &&
+        camMul[3] > 0.0f)
     {
-        const float greenRef = camMul[1];
+        const float greenRef = (camMul[1] + camMul[3]) / 2;
         wbRed = camMul[0] / greenRef;
         wbBlue = camMul[2] / greenRef;
     }

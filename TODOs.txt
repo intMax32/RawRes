@@ -1,7 +1,24 @@
-White balancing 로직 수정
+코드 기준으로 보면 지금 프로젝트는 `RAW preview path`는 이미 있지만, ISP 전체 관점에서는 아직 `sensor conditioning -> linear color -> tone/output` 단계가 많이 비어 있어요. 체크해보면 부족한 부분은 아래가 핵심입니다.
 
-Noise reduction을 위해 Chroma와 Luminance를 분리할 수 있는 Color space로 보내는 과정이 필요하다.
+1. `Active area crop`과 `optical black` 분리가 없습니다. [`src/raw_loader.cpp`](/Users/leejeongmin/Desktop/Developement/RawRes/src/raw_loader.cpp:26), [`src/raw_loader.cpp`](/Users/leejeongmin/Desktop/Developement/RawRes/src/raw_loader.cpp:54) 에서 `raw_width/raw_height` 전체를 그대로 읽고 있어서, 센서 마진이나 black border까지 처리에 섞일 가능성이 있어요.
 
-사진 색 빠지는 문제 수정
-    1. Bit 수를 잘못 지정해서 값이 사라지고 있다.
-    2. ???
+2. `Black level / white level` 모델이 너무 단순합니다. [`src/raw_loader.cpp`](/Users/leejeongmin/Desktop/Developement/RawRes/src/raw_loader.cpp:71), [`src/raw_loader.cpp`](/Users/leejeongmin/Desktop/Developement/RawRes/src/raw_loader.cpp:72), [`src/isp_pipeline.cpp`](/Users/leejeongmin/Desktop/Developement/RawRes/src/isp_pipeline.cpp:23) 에서 단일 scalar만 쓰고 있고, [`src/isp_pipeline.cpp`](/Users/leejeongmin/Desktop/Developement/RawRes/src/isp_pipeline.cpp:92) 에서 WB 직후 바로 `clip` 해서 하이라이트 headroom과 채널별 saturation 정보를 잃습니다.
+
+3. `Color pipeline`이 사실상 “행렬 한 번 곱”으로 축약돼 있습니다. [`src/raw_loader.cpp`](/Users/leejeongmin/Desktop/Developement/RawRes/src/raw_loader.cpp:102), [`src/isp_pipeline.cpp`](/Users/leejeongmin/Desktop/Developement/RawRes/src/isp_pipeline.cpp:136) 에서 camera space를 바로 3x3으로 밀어버리는데, 일반 ISP처럼 `camera RGB -> XYZ -> output RGB(sRGB 등)` 흐름, white point adaptation, gamut 처리, output space 정의가 분리돼 있지 않아요.
+
+4. `Tone reproduction` 단계가 없습니다. [`src/isp_pipeline.cpp`](/Users/leejeongmin/Desktop/Developement/RawRes/src/isp_pipeline.cpp:150), [`src/isp_pipeline.cpp`](/Users/leejeongmin/Desktop/Developement/RawRes/src/isp_pipeline.cpp:192) 를 보면 사실상 gamma만 적용하고 있어서, auto exposure, tone curve, highlight roll-off, shadow lift, local tone mapping 같은 ISP 핵심 단계가 빠져 있습니다.
+
+5. `Denoise`의 위치와 방식이 ISP답지 않습니다. [`src/isp_pipeline.cpp`](/Users/leejeongmin/Desktop/Developement/RawRes/src/isp_pipeline.cpp:175), [`src/isp_pipeline.cpp`](/Users/leejeongmin/Desktop/Developement/RawRes/src/isp_pipeline.cpp:180) 에서 denoise가 demosaic + color correction 뒤에 들어가고 있고, ISO/noise profile 기반 제어가 없어요. `BM3D`도 아직 stub 상태입니다 [`src/noise_removal/bm3d.cpp`](/Users/leejeongmin/Desktop/Developement/RawRes/src/noise_removal/bm3d.cpp:7).
+
+6. `Luma / chroma 분리` 기반 노이즈 처리가 없습니다. 지금 guided filter는 그냥 현재 색공간에서 바로 적용되고 있고 [`src/noise_removal/guided_filter.cpp`](/Users/leejeongmin/Desktop/Developement/RawRes/src/noise_removal/guided_filter.cpp:178), ISP에서 흔한 `Y/C 분리 후 chroma stronger denoise, luma edge-preserving` 구조가 없어서 색 번짐과 디테일 손실을 따로 제어하기 어렵습니다.
+
+7. `Demosaic quality control`이 약합니다. [`src/isp_pipeline.cpp`](/Users/leejeongmin/Desktop/Developement/RawRes/src/isp_pipeline.cpp:104), [`src/isp_pipeline.cpp`](/Users/leejeongmin/Desktop/Developement/RawRes/src/isp_pipeline.cpp:110), [`src/isp_pipeline.cpp`](/Users/leejeongmin/Desktop/Developement/RawRes/src/isp_pipeline.cpp:114), [`src/isp_pipeline.cpp`](/Users/leejeongmin/Desktop/Developement/RawRes/src/isp_pipeline.cpp:118) 를 보면 패턴별 알고리즘도 통일돼 있지 않고, green equilibration, zipper suppression, moire 대응 같은 보정이 없습니다.
+
+8. `Sensor defect correction` 계열이 비어 있습니다. 현재 `load`와 `makePreview` 경로에는 dead/hot pixel correction, row/column fixed-pattern noise 보정, lens shading correction, vignette 보정 같은 stage가 없어요 [`src/raw_loader.cpp`](/Users/leejeongmin/Desktop/Developement/RawRes/src/raw_loader.cpp:8), [`src/isp_pipeline.cpp`](/Users/leejeongmin/Desktop/Developement/RawRes/src/isp_pipeline.cpp:10).
+
+9. `Sharpening / detail enhancement`가 없습니다. denoise 뒤에 capture sharpening이나 edge-aware sharpening이 전혀 없어서, tone을 잡기 시작하면 결과가 쉽게 “뭉개진 preview” 쪽으로 갈 수 있어요. README에도 이 부분이 아직 미구현으로 남아 있습니다 [`Readme.md`](/Users/leejeongmin/Desktop/Developement/RawRes/Readme.md:37).
+
+10. `Display/export stage`도 아직 불명확합니다. [`src/isp_pipeline.cpp`](/Users/leejeongmin/Desktop/Developement/RawRes/src/isp_pipeline.cpp:170), [`src/isp_pipeline.cpp`](/Users/leejeongmin/Desktop/Developement/RawRes/src/isp_pipeline.cpp:209) 에서 마지막에 `BGR2RGB` 변환을 하고, 그 결과를 [`src/main.cpp`](/Users/leejeongmin/Desktop/Developement/RawRes/src/main.cpp:106), [`src/main.cpp`](/Users/leejeongmin/Desktop/Developement/RawRes/src/main.cpp:109) 로 `imwrite`/`imshow` 하는데, OpenCV 기준으로는 채널 순서가 뒤바뀔 가능성이 큽니다. ISP의 마지막 단계인 display transform/output encoding이 아직 정리되지 않았다는 뜻이기도 해요.
+
+우선순위를 딱 잡으면 `active area + black/white/headroom 정리` → `정확한 color pipeline 분리` → `tone mapping` → `raw/linear 단계 denoise` 순서가 제일 좋아 보여요.  
+원하면 다음엔 제가 이걸 바탕으로 `ISP stage 체크리스트` 형태로 더 체계적으로 정리하거나, 바로 `무엇부터 구현할지 1차 로드맵`까지 뽑아드릴게요.
